@@ -3,7 +3,7 @@ import react from "@vitejs/plugin-react";
 import path from "path";
 // import runtimeErrorOverlay from "@replit/vite-plugin-runtime-error-modal";
 // import { cartographer } from "@replit/vite-plugin-cartographer";
-import { themePlugin } from "./client/src/theme"; // ou o caminho correto se for diferente
+// import { themePlugin } from "./client/src/theme"; 
 
 export default defineConfig({
   plugins: [
