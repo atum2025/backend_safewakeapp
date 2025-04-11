@@ -9,9 +9,9 @@
     { "source": "/health", "destination": "/api/health" },
     { "source": "/api/(.*)", "destination": "/api/$1" }
   ],
- "functions": {
-    "api/**/*.js": {
-      "runtime": "nodejs18.x"
+  "functions": {
+    "server/routes.ts": {
+      "runtime": "nodejs20.x"
     }
   }
 }
