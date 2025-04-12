@@ -1,9 +1,12 @@
 {
   "name": "backend-safewake",
   "version": "1.0.0",
+  "type": "module",
   "main": "dist/index.js",
   "scripts": {
-    "build:server": "esbuild server/index.ts --platform=node --bundle --format=cjs --outfile=dist/index.js",
+    "build": "npm run build:client && npm run build:server",
+    "build:client": "vite build",
+    "build:server": "esbuild server/index.ts --platform=node --bundle --format=esm --outfile=dist/index.js --external:vite --external:lightningcss --external:@babel/preset-typescript --external:@vitejs/plugin-react",
     "dev": "nodemon server/index.ts",
     "start": "node dist/index.js"
   },
@@ -18,6 +21,7 @@
   "devDependencies": {
     "esbuild": "^0.20.0",
     "nodemon": "^3.0.0",
-    "typescript": "^5.8.3"
+    "typescript": "^5.8.3",
+    "vite": "^5.0.0"
   }
 }
