@@ -1,14 +1,6 @@
-import dotenv from "dotenv";
-dotenv.config();
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { db } from "./db";
-
-// Conexão com o banco de dados Neon usando a variável de ambiente DATABASE_URL
-import { neon } from "@neondatabase/serverless";
-
-// Configura a URL de conexão do banco
-const sql = neon(process.env.DATABASE_URL!);
 
 const app = express();
 app.use(express.json());
@@ -22,7 +14,7 @@ app.get("/ping", (_req, res) => {
 // Teste de conexão com banco
 app.get("/health", async (_req, res) => {
   try {
-    await sql.execute("SELECT 1");
+    await db.execute("SELECT 1");
     res.status(200).send("✅ Database connected!");
   } catch (err) {
     console.error("Erro no /health:", err);
