@@ -103,22 +103,17 @@ export async function registerRoutes(app: Express): Promise<void> {
   });
 
   // Config de alarme
-app.post("/api/alarm-config", async (req: Request, res: Response) => {
-  try {
-    if (typeof req.body.nextAlarm === "string") {
-      req.body.nextAlarm = new Date(req.body.nextAlarm);
+  app.post("/api/alarm-config", async (req: Request, res: Response) => {
+    try {
+      const configData = insertAlarmConfigSchema.parse(req.body);
+      const config = await storage.createAlarmConfig(configData);
+      res.status(201).json(config);
+    } catch (error) {
+      if (error instanceof ZodError)
+        return res.status(400).json({ message: fromZodError(error).message });
+      res.status(500).json({ message: "Erro ao criar configuração de alarme" });
     }
-
-    const configData = insertAlarmConfigSchema.parse(req.body);
-    const config = await storage.createAlarmConfig(configData);
-    res.status(201).json(config);
-  } catch (error) {
-    if (error instanceof ZodError)
-      return res.status(400).json({ message: fromZodError(error).message });
-    res.status(500).json({ message: "Erro ao criar configuração de alarme" });
-  }
-});
-
+  });
 
   app.get("/api/alarm-config/:userId", async (req: Request, res: Response) => {
     try {

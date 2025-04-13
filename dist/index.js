@@ -31406,6 +31406,9 @@ async function registerRoutes(app2) {
   });
   app2.post("/api/alarm-config", async (req, res) => {
     try {
+      if (typeof req.body.nextAlarm === "string") {
+        req.body.nextAlarm = new Date(req.body.nextAlarm);
+      }
       const configData = insertAlarmConfigSchema.parse(req.body);
       const config = await storage.createAlarmConfig(configData);
       res.status(201).json(config);
