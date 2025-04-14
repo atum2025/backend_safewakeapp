@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "main": "dist/index.js",
   "scripts": {
-    "dev": "npm run build && dotenv -e .env -- node dist/index.js",
     "build": "esbuild server/index.ts --platform=node --bundle --format=esm --outfile=dist/index.js --external:express --external:dotenv --external:@neondatabase/serverless --external:drizzle-orm --external:zod --external:zod-validation-error",
+    "dev": "npm run build && node dist/index.js",
     "start": "node dist/index.js"
   },
   "dependencies": {
@@ -17,9 +17,8 @@
     "zod-validation-error": "^3.4.0"
   },
   "devDependencies": {
-    "dotenv-cli": "^7.4.4",
+    "dotenv-cli": "^8.0.0",
     "esbuild": "^0.20.0",
-    "@react-native-community/cli": "latest",
     "typescript": "^5.8.3"
   },
   "type": "module"
