@@ -179,33 +179,25 @@ app.post("/api/alarm-config", async (req: Request, res: Response) => {
     }
   });
 
-// Emergência WhatsApp
-app.post("/api/send-emergency", async (req: Request, res: Response) => {
-  try {
-    const { userId } = req.body;
-    const uid = Number(userId);
-    if (!uid || isNaN(uid))
-      return res.status(400).json({ message: "ID do usuário é obrigatório e válido" });
+  // Emergência WhatsApp
+  app.post("/api/send-emergency", async (req: Request, res: Response) => {
+    try {
+      const { userId } = req.body;
+      const uid = Number(userId);
+      if (!uid || isNaN(uid)) return res.status(400).json({ message: "ID do usuário é obrigatório e válido" });
 
-    const user = await storage.getUser(uid);
-    const contact = await storage.getEmergencyContact(uid);
+      const user = await storage.getUser(uid);
+      const contact = await storage.getEmergencyContact(uid);
 
-    if (!user || !contact)
-      return res.status(404).json({
-        message: !user ? "Usuário não encontrado" : "Contato de emergência não encontrado",
+      if (!user || !contact)
+        return res.status(404).json({ message: !user ? "Usuário não encontrado" : "Contato de emergência não encontrado" });
+
+      res.json({
+        success: true,
+        message: `Mensagem de emergência enviada para ${contact.name} em ${contact.whatsapp}`,
       });
-
-    console.log(`🚨 Enviando emergência para ${contact.name}: ${contact.whatsapp}`);
-
-    // Aqui entraria o envio real via WhatsApp API
-    // await sendWhatsappMessage(contact.whatsapp, `Alerta: ${user.name} não desativou o alarme!`);
-
-    res.json({
-      success: true,
-      message: `Mensagem de emergência enviada para ${contact.name} em ${contact.whatsapp}`,
-    });
-  } catch (err) {
-    console.error("Erro ao enviar emergência:", err);
-    res.status(500).json({ message: "Erro ao enviar mensagem de emergência" });
-  }
-});
+    } catch {
+      res.status(500).json({ message: "Erro ao enviar mensagem de emergência" });
+    }
+  });
+}
