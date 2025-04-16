@@ -1,15 +1,12 @@
-// App.tsx
-import React, { useEffect } from 'react';
-import { Text, View } from 'react-native';
-import axios from 'axios';
+// App.tsx (React Web)
+import { useEffect } from 'react';
 
 export default function App() {
   useEffect(() => {
-    // Simulação
     const userId = 1;
     const now = new Date();
-    const nextAlarm = new Date(now.getTime() + 10 * 1000); // daqui 10 segundos
-    const tolerance = 3 * 60 * 1000; // 3 minutos
+    const nextAlarm = new Date(now.getTime() + 10 * 1000);
+    const tolerance = 3 * 60 * 1000;
 
     console.log("⏰ Alarme agendado para:", nextAlarm.toISOString());
 
@@ -21,26 +18,23 @@ export default function App() {
       console.log("⏳ Tolerância até:", limit.toISOString());
 
       if (current > limit) {
-        console.log("🚨 Alarme não foi desligado! Enviando emergência...");
+        console.log("🚨 Enviando emergência...");
 
-        axios.post("http://localhost:3000/api/send-emergency", {
-          userId: userId
-        }).then(res => {
-          console.log("✅ Emergência enviada:", res.data);
-        }).catch(err => {
-          console.error("❌ Erro ao enviar emergência:", err);
-        });
+        fetch("http://localhost:3000/api/send-emergency", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ userId })
+        })
+          .then(res => res.json())
+          .then(data => console.log("✅ Emergência enviada:", data))
+          .catch(err => console.error("❌ Erro ao enviar emergência:", err));
 
-        clearInterval(interval); // para o loop
+        clearInterval(interval);
       }
-    }, 10000); // verifica a cada 10 segundos
+    }, 10000);
 
     return () => clearInterval(interval);
   }, []);
 
-  return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Text>SafeWake em modo teste 🧪⏰</Text>
-    </View>
-  );
+  return <h1>SafeWake Web Teste ⏰</h1>;
 }

@@ -1,6 +1,7 @@
-import "dotenv/config";
+import "dotenv/config"; // Só esse já basta, remove o outro
 import express, { type Request, Response, NextFunction } from "express";
 import cors from "cors";
+app.use(cors());
 import { registerRoutes } from "./routes";
 import { neon } from "@neondatabase/serverless";
 
@@ -10,12 +11,9 @@ if (!process.env.NEON_DB_URL) {
 }
 
 // ✅ Conexão com Neon usando a variável certa
-const sql = neon(process.env.NEON_DB_URL!);
+const sql = neon(process.env.NEON_DB_URL!); // Corrigido aqui!
 
 const app = express();
-
-// ✅ Middlewares essenciais
-app.use(cors()); // <-- aqui agora está no lugar certo!
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
