@@ -1,0 +1,54 @@
+import { db } from "../db";
+import { alarmConfigs } from "../../shared/schema";
+import { eq } from "drizzle-orm";
+
+function log(msg: string) {
+  const now = new Date().toLocaleString("pt-BR", { timeZone: "America/Sao_Paulo" });
+  console.log(`[${now}] ${msg}`);
+}
+
+async function checkAlarms() {
+  try {
+    const now = new Date();
+
+    const alarms = await db.select().from(alarmConfigs);
+    log(`⏱️ Iniciando verificação de ${alarms.length} alarmes...`);
+
+    for (const alarm of alarms) {
+      const { id, userId, nextAlarm, intervalHours } = alarm;
+
+      if (!nextAlarm || !intervalHours || intervalHours < 1 || intervalHours > 24) {
+        log(`⚠️ Alarme ${id} de usuário ${userId} tem dados inválidos. Pulando...`);
+        continue;
+      }
+
+      const next = new Date(nextAlarm);
+
+      if (now > next) {
+        // Calcula quantas repetições se passaram
+        const msPassed = now.getTime() - next.getTime();
+        const intervalMs = intervalHours * 60 * 60 * 1000;
+        const repetitionsMissed = Math.floor(msPassed / intervalMs) + 1;
+
+        const newNextAlarm = new Date(next.getTime() + repetitionsMissed * intervalMs);
+
+        await db
+          .update(alarmConfigs)
+          .set({ nextAlarm: newNextAlarm })
+          .where(eq(alarmConfigs.id, id));
+
+        log(`🔁 Alarme ${id} atualizado: novo nextAlarm → ${newNextAlarm.toISOString()}`);
+      } else {
+        log(`⏩ Alarme ${id} ainda está no futuro (${next.toISOString()}).`);
+      }
+    }
+
+    log("✅ Verificação finalizada.");
+    process.exit(0);
+  } catch (err) {
+    console.error("❌ Erro durante a verificação de alarmes:", err);
+    process.exit(1);
+  }
+}
+
+checkAlarms();

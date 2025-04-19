@@ -3,7 +3,7 @@ import { CapacitorConfig } from '@capacitor/cli';
 const config: CapacitorConfig = {
   appId: 'com.safewake.app',
   appName: 'SafeWake',
-  webDir: 'dist',
+  webDir: 'client/dist',
   server: {
     androidScheme: 'https',
     iosScheme: 'https',
